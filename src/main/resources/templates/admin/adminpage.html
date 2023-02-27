@@ -32,7 +32,8 @@
       <ul class="navbar-nav me-auto mb-2 mb-xl-0">
         <span class="align-middle font-weight-bold mr-1" th:text="${currentUser.getEmail()}"></span></b>
         <span class="align-middle mr-1">with roles:</span>
-        <span class="align-middle" th:each="role : ${currentUser.getRoles()}" th:text="${role.getName + '&nbsp;'}">
+
+        <span class="align-middle" th:each="role : ${currentUser.getRoles()}" th:text="${role.getName.replaceFirst('ROLE_', '') + '&nbsp;'}">
                     </span>
       </ul>
     </div>
@@ -98,7 +99,7 @@
                     <td th:text="${user.age}"></td>
                     <td th:text="${user.email}"></td>
                     <td>
-                      <li th:each="role : ${user.getRoles()}" th:text="${role.getName()}"></li>
+                      <li th:each="role : ${user.getRoles()}" th:text="${role.getName.replaceFirst('ROLE_', '')}"></li>
                     </td>
                     <td>
                       <button type="button" class="btn btn-primary" data-toggle="modal"
@@ -180,7 +181,7 @@
                                       id="roles1" th:name="roles" size="3" required>
                                 <option th:each="role : ${roleList}"
                                         th:name="*{roleList}"
-                                        th:text="${role.name}" th:value="${role.id}"
+                                        th:text="${role.name.replaceFirst('ROLE_', '')}" th:value="${role.id}"
                                         class="m-2"/>
                                 </th:block>
                               </select>
@@ -260,7 +261,7 @@
                                       disabled>
                                 <option th:each="role: ${roleList}"
                                         th:name="*{roleList}"
-                                        th:text="${role.name}" th:value="${role.id}"
+                                        th:text="${role.name.replaceFirst('ROLE_', '')}" th:value="${role.id}"
                                         class="m-2" disabled/>
                                 </th:block>
                               </select>
@@ -318,7 +319,7 @@
                         size="3" required>
                   <option th:each="role: ${roleList}"
                           th:name="*{roles}"
-                          th:text="${role.name}" th:value="${role.id}" class="m-2"/>
+                          th:text="${role.name.replaceFirst('ROLE_', '')}" th:value="${role.id}" class="m-2"/>
                 </select>
 
                 <br>

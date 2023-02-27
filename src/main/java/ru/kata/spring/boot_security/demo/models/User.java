@@ -2,15 +2,15 @@ package ru.kata.spring.boot_security.demo.models;
 
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-@Component
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,26 +26,26 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private Set<Role> roles;
 
 
     public User() {
 
     }
 
-    public User(String name, String lastName, int age, String email, String password, List<Role> roles) {
+    public User(String name, String lastName, int age, String email, String password, Collection<String> roles) {
         this.name = name;
         this.lastName = lastName;
         this.age = age;
         this.email = email;
         this.password = password;
-        this.roles = roles;
+        this.roles = roles.stream().map(Role::new).collect(Collectors.toSet());
     }
 
     public Long getId() {
@@ -97,13 +97,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-
-
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 
@@ -125,12 +123,12 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return age == user.age && Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
+        return id.equals(user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, lastName, age, email, password, roles);
+        return Objects.hash(id);
     }
 
     @Override
@@ -140,7 +138,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        return this.roles.stream().map(p -> new SimpleGrantedAuthority(p.getName())).collect(Collectors.toList());
     }
 
     @Override

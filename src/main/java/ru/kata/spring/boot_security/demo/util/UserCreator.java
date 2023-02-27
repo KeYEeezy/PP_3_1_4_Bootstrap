@@ -14,8 +14,8 @@ public class UserCreator {
         private static final String ROLE_USER = "ROLE_USER";
 
         public static List<User> createUsersWithRoles() {
-            User user = new User("user", "user", 26, "user@mail.ru", "user", Arrays.asList(ROLE_USER).stream().map(Role::new).collect(Collectors.toList()));
-            User admin = new User("admin", "admin", 26, "admin@mail.ru", "admin", Arrays.asList(ROLE_ADMIN).stream().map(Role::new).collect(Collectors.toList()));
+            User user = new User("user", "user", 26, "user@mail.ru", "user", List.of(ROLE_USER));
+            User admin = new User("admin", "admin", 26, "admin@mail.ru", "admin", List.of(ROLE_ADMIN));
             return List.of(user, admin);
         }
     }
